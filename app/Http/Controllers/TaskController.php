@@ -14,7 +14,8 @@ class TaskController extends Controller
     public function getAllTasks()
     {
         try {
-            $tasks = Task::get();
+            $tasks = Task::with('user')->get();
+            // $tasks = Task::where('description', 'like', '%' . 'aqui la descripcion' . '%')->get();
 
             // throw new Exception("Error finding tasks.");
 
@@ -43,6 +44,29 @@ class TaskController extends Controller
                 'success' => true,
                 'data' => [
                     'tasks' => $tasks
+                ]
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error('Error getting tasks by user' . $th->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function createTask(Request $req)
+    {
+        try {
+            $newTask = Task::create([
+                'description' => $req->input('description'),
+                'user_id' => $req->input('user_id'),
+            ]);
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'task' => $newTask
                 ]
             ], Response::HTTP_OK);
         } catch (\Throwable $th) {

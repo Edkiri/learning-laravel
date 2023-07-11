@@ -34,6 +34,8 @@ Route::get('task', [TaskController::class, 'getAllTasks']);
 
 Route::get('task/user/{userId}', [TaskController::class, 'getTasksByUser']);
 
+Route::post('task', [TaskController::class, 'createTask']);
+
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
