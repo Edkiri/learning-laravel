@@ -7,6 +7,7 @@ use App\Models\Task;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
@@ -59,23 +60,34 @@ class TaskController extends Controller
     public function createTask(Request $req)
     {
         try {
+            $validator = Validator::make($req->all(), [
+                'description' => 'required|string',
+                'user_id' => 'required'
+            ], [
+                'description.required' => 'description is a required field',
+                'user_id' => 'error reading user_id'
+            ]);
+            if ($validator->fails()) {
+                throw new Exception($validator->errors());
+            }
+            $validData = $validator->validated();
             $newTask = Task::create([
-                'description' => $req->input('description'),
-                'user_id' => $req->input('user_id'),
+                'description' => $validData['description'],
+                'user_id' => $validData['user_id'],
             ]);
             return response()->json([
                 'success' => true,
                 'data' => [
                     'task' => $newTask
                 ]
-            ], Response::HTTP_OK);
+            ], Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             Log::error('Error getting tasks by user' . $th->getMessage());
 
             return response()->json([
                 'success' => false,
                 'message' => $th->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 }
