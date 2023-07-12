@@ -15,3 +15,6 @@ Route::post('auth/login', [AuthController::class, 'login']);
 Route::post('auth/logout', [AuthController::class, 'logout']);
 
 Route::middleware('auth:sanctum')->get('user/profile', [AuthController::class, 'profile']);
+Route::delete('user/delete', [AuthController::class, 'deleteMyAccount']);
+Route::delete('user/restore/{userId}', [AuthController::class, 'restoreAccount']);
+

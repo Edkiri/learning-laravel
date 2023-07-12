@@ -128,4 +128,43 @@ class AuthController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function deleteMyAccount() {
+        try {
+            $user = auth()->user();
+            $userFound = User::find($user->id);
+            $userFound->delete();
+
+
+            return response()->json([
+                'success' => true,
+                'data' => []
+            ], Response::HTTP_NO_CONTENT);
+        } catch (\Throwable $th) {
+            Log::error('Error getting tasks' . $th->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function restoreAccount($userId) {
+        try {
+            User::withTrashed()->where('id', $userId)->restore();
+
+            return response()->json([
+                'success' => true,
+                'data' => []
+            ], Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            Log::error('Error getting tasks' . $th->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => $th->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
 }
