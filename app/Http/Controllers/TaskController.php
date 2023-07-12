@@ -67,14 +67,17 @@ class TaskController extends Controller
                 'description.required' => 'description is a required field',
                 'user_id' => 'error reading user_id'
             ]);
+
             if ($validator->fails()) {
                 throw new Exception($validator->errors());
             }
+
             $validData = $validator->validated();
             $newTask = Task::create([
                 'description' => $validData['description'],
                 'user_id' => $validData['user_id'],
             ]);
+
             return response()->json([
                 'success' => true,
                 'data' => [
