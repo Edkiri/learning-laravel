@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('task', [TaskController::class, 'getAllTasks']);
 Route::get('task/user/{userId}', [TaskController::class, 'getTasksByUser']);
 Route::post('task', [TaskController::class, 'createTask']);
-Route::put('task', [TaskController::class, 'updateTask']);
+Route::put('task/{taskId}', [TaskController::class, 'updateTask']);
 Route::delete('task/{taskId}', [TaskController::class, 'deleteTask']);
 
 Route::post('auth/register', [AuthController::class, 'register']);

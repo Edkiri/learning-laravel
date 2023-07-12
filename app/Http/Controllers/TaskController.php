@@ -95,13 +95,21 @@ class TaskController extends Controller
         }
     }
 
-    public function updateTask(Request $req)
+    public function updateTask(Request $req, $taskId)
     {
         try {
+            $task = Task::find($taskId);
+
+            if (!$task) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Task not found'
+                ], Response::HTTP_NOT_FOUND);
+            }
+
             $validator = Validator::make($req->all(), [
                 'description' => 'string',
-                'status' => 'boolean',
-                'id' => 'required'
+                'status' => 'boolean'
             ]);
 
             if ($validator->fails()) {
@@ -110,14 +118,9 @@ class TaskController extends Controller
 
             $validData = $validator->validated();
 
-            $task = Task::find($validData['id']);
+            
 
-            if (!$task) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Task not found'
-                ], Response::HTTP_NOT_FOUND);
-            }
+            
 
             if (isset($validData['description'])) {
                 $task->description = $validData['description'];
